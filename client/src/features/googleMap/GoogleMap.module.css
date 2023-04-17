@@ -1,0 +1,28 @@
+.googleMap {
+  height: 520px;
+}
+
+.marker {
+  position: relative;
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+  text-align: center;
+}
+
+.markerText {
+  position: absolute;
+  top: 30px;
+  left: 12px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-size: 16px;
+}
+.markerText h5,
+.markerText span {
+  font-weight: bold;
+  color: black;
+  text-shadow: 1px 1px 0 white, -1px -1px 0 white, -1px 1px 0 white,
+    1px -1px 0 white;
+  margin: 0;
+}

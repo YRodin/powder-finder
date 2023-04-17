@@ -1,0 +1,37 @@
+.navbar {
+  height: 15%;
+  opacity: 75%;
+  font-size: 2rem;
+  transition: transform 0.3s;
+  background-color: #122c7e;
+}
+.navContainer {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.navbar-collapse {
+  flex-grow: 1;
+}
+.navbarBrand {
+  font-size: 2.5rem !important;
+}
+
+.brandText {
+  display: inline;
+}
+
+@media (max-width: 767px) {
+  .brandText {
+    display: none;
+  }
+}
+.navItems {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.logo {
+  height: 6rem;
+}

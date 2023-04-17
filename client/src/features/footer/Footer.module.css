@@ -1,0 +1,22 @@
+.footer {
+  background-color: #122b7ec5;
+  width: 100%;
+  font-size: 1.5em;
+  color: rgba(244, 245, 250, 0.96);
+}
+
+.footerContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navLink {
+  color: white !important;
+}
+
+@media (max-width: 767px) {
+  .footerContent {
+    flex-direction: column;
+  }
+}
