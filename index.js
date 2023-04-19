@@ -14,7 +14,7 @@ require ('./services/passport');
 // Set up Fixie proxy to be used in prod for static IP for Heroku app
 const { URL } = require('url');
 const Agent = require('socks5-http-client/lib/Agent');
-const fixieSocksUrl = process.env.FIXIE_URL;
+const fixieSocksUrl = process.env.FIXIE_SOCKS_URL;
 const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
