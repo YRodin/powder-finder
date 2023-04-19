@@ -11,11 +11,32 @@ const path = require('path');
 const port = process.env.PORT || 5001;
 // Import and execute passport.js configuration
 require ('./services/passport');
-// Connect DB
-mongoose.connect(keys.MONGODB_URI, {
+// Set up Fixie proxy to be used in prod for static IP for Heroku app
+const { URL } = require('url');
+const Agent = require('socks5-http-client/lib/Agent');
+const fixieSocksUrl = process.env.FIXIE_URL;
+const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+  useCreateIndex: true,
+  useFindAndModify: false,
+  family: 4, // Use IPv4
+};
+if (process.env.NODE_ENV === 'production') {
+  mongooseOptions.server = {
+    socketOptions: {
+      agent: new Agent({
+        socksHost: new URL(fixieSocksUrl).hostname,
+        socksPort: new URL(fixieSocksUrl).port,
+        socksUsername: new URL(fixieSocksUrl).username,
+        socksPassword: new URL(fixieSocksUrl).password,
+      }),
+    },
+  };
+}
+
+// Connect DB
+mongoose.connect(keys.MONGODB_URI, mongooseOptions);
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
