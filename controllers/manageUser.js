@@ -1,12 +1,10 @@
 const authentication = require("./authentication");
 const User = require("../models/user");
 
-exports.addPass = function (req, res, next) {
-  // find and update user in db
-  User.findOne({ userName: req.user.userName }, function (err, user) {
-    if (err) {
-      next(err);
-    } else {
+exports.addPass = function(req, res, next) {
+  User.findOne({ userName: req.user.userName }).exec((error, user) => {
+    if(error) { next(error);}
+    else {
       user.seasonPass = req.body.seasonPass;
       user.save((err, user) => {
         if (err) {
@@ -15,7 +13,7 @@ exports.addPass = function (req, res, next) {
         res.json(user);
       });
     }
-  });
+  })
 };
 
 exports.updateInfo = async (req, res, next) => {
@@ -24,9 +22,7 @@ exports.updateInfo = async (req, res, next) => {
     seasonPass: "",
     token: "",
   };
-  
-  console.log('req.body is below:');
-  console.log(req.body);
+
   for (const prop in req.body) {
     // loop over each property in request body and update user
     switch (prop) {
