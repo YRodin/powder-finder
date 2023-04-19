@@ -18,9 +18,6 @@ const fixieSocksUrl = process.env.FIXIE_SOCKS_URL;
 const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  family: 4, // Use IPv4
 };
 if (process.env.NODE_ENV === 'production') {
   mongooseOptions.server = {
