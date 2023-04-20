@@ -40,11 +40,9 @@ exports.signup = function (req, res, next) {
       .status(422)
       .send({ error: "You must provide userName and password" });
   }
-
-  // See if a user with the given userName exists
-  User.findOne({ userName: userName }, function (err, existingUser) {
-    if (err) {
-      return next(err);
+  User.findOne({ userName: userName }).exec((error, existingUser) => {
+    if (error) {
+      return next(error);
     }
     // If a user with userName does exist, return an error
     if (existingUser) {
@@ -66,25 +64,4 @@ exports.signup = function (req, res, next) {
   });
 };
 
-User.findOne({ userName: userName }).exec((error, existingUser) => {
-  if (error) {
-    return next(error);
-  }
-  // If a user with userName does exist, return an error
-  if (existingUser) {
-    return res.status(422).send({ error: "userName is in use" });
-  }
-  // If a user with userName does NOT exist, create and save user record
-  const user = new User();
-  user.userName = userName;
-  user.setPassword(password);
-  user.save(function (err, user) {
-    if (err) {
-      return next(err);
-    }
-    // Repond to request indicating the user was created
-    const token = tokenForUser(user);
-    const { userName, seasonPass } = user;
-    res.send({ userName, seasonPass, token });
-  });
-});
+
