@@ -46,24 +46,18 @@ exports.signup = function (req, res, next) {
     if (err) {
       return next(err);
     }
-
     // If a user with userName does exist, return an error
     if (existingUser) {
       return res.status(422).send({ error: "userName is in use" });
     }
-
     // If a user with userName does NOT exist, create and save user record
     const user = new User();
-
     user.userName = userName;
-
     user.setPassword(password);
-
     user.save(function (err, user) {
       if (err) {
         return next(err);
       }
-
       // Repond to request indicating the user was created
       const token = tokenForUser(user);
       const { userName, seasonPass } = user;
@@ -71,3 +65,26 @@ exports.signup = function (req, res, next) {
     });
   });
 };
+
+User.findOne({ userName: userName }).exec((error, existingUser) => {
+  if (error) {
+    return next(error);
+  }
+  // If a user with userName does exist, return an error
+  if (existingUser) {
+    return res.status(422).send({ error: "userName is in use" });
+  }
+  // If a user with userName does NOT exist, create and save user record
+  const user = new User();
+  user.userName = userName;
+  user.setPassword(password);
+  user.save(function (err, user) {
+    if (err) {
+      return next(err);
+    }
+    // Repond to request indicating the user was created
+    const token = tokenForUser(user);
+    const { userName, seasonPass } = user;
+    res.send({ userName, seasonPass, token });
+  });
+});
