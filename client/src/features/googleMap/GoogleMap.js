@@ -58,7 +58,7 @@ export default function GoogleMap() {
   }, [matchingResorts]);
 
   return (
-    <div className={styles.googleMap} id="map-container">
+    <div className={styles.googleMap} style="height:520px" id="map-container">
       {matchingResorts.length > 0 ? (
         <GoogleMapReact
           bootstrapURLKeys={{ key: keys.GOOGLE_API_KEY }}
