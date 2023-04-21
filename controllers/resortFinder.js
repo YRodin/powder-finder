@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const PassInfo = require("../models/passInfo");
-const keys = require("../config/dev");
+// const keys = require("../config/dev");
 const { Client } = require("@googlemaps/google-maps-services-js");
 const axios = require("axios");
 const ResortInfo = require("../models/resortInfo");
@@ -15,7 +15,7 @@ exports.resortFinder = async (req, res, next) => {
   // make initial request for user selected location coordinates
   try {
     const response4UserSelection = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${req.body.city},+${req.body.state}&key=${keys.GOOGLE_API_KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${req.body.city},+${req.body.state}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
     );
     location.latitude =
       response4UserSelection.data.results[0].geometry.location.lat;
@@ -30,7 +30,7 @@ exports.resortFinder = async (req, res, next) => {
       location,
       radius: req.body.radius,
       keyword: "ski resort",
-      key: keys.GOOGLE_API_KEY,
+      key: process.env.REACT_APP_GOOGLE_API_KEY,
       type: [
         "tourist_attraction",
         "lodging",
