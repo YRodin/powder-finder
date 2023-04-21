@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import GoogleMapReact from "google-map-react";
-import keys from "../../config/keys/keys";
+// import keys from "../../config/keys/keys";
 import { useSelector } from "react-redux";
 import styles from "./GoogleMap.module.css";
 import { ErrorNotificationModal } from "../utilities/ErrorNotificationModal";
 import { animateScroll } from "react-scroll";
 import Marker from "./Marker";
 
-console.log('API Key:', keys.GOOGLE_API_KEY);
+// console.log('API Key:', keys.GOOGLE_API_KEY);
 
 export default function GoogleMap() {
   const { matchingResorts, searchRequested } = useSelector(
@@ -63,7 +63,7 @@ export default function GoogleMap() {
     <div className={styles.googleMap} style={{height: '520px'}} id="map-container">
       {matchingResorts.length > 0 ? (
         <GoogleMapReact
-          bootstrapURLKeys={{ key: keys.GOOGLE_API_KEY }}
+          bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_API_KEY }}
           center={center}
           zoom={zoom}
           // onClick={handleClickOutside}
@@ -72,7 +72,7 @@ export default function GoogleMap() {
         </GoogleMapReact>
       ) : (
         <GoogleMapReact
-          bootstrapURLKeys={{ key: keys.GOOGLE_API_KEY }}
+          bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_API_KEY }}
           center={center}
           zoom={zoom}
           // onClick={handleClickOutside}
