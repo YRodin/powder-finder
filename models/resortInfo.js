@@ -19,6 +19,7 @@ ResortInfoSchema.methods.getCoordinates = async function (req, res, next) {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${this.city},+${this.state}&key=${keys.GOOGLE_API_KEY}`
       );
+      console.log(response.data);
       this.coordinates.lat = response.data.results[0].geometry.location.lat;
       this.coordinates.lon = response.data.results[0].geometry.location.lng;
       await this.save((err, updatedRecord) => {
