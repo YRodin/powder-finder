@@ -7,6 +7,8 @@ import { ErrorNotificationModal } from "../utilities/ErrorNotificationModal";
 import { animateScroll } from "react-scroll";
 import Marker from "./Marker";
 
+console.log('API Key:', keys.GOOGLE_API_KEY);
+
 export default function GoogleMap() {
   const { matchingResorts, searchRequested } = useSelector(
     (state) => state.resorts2Display
