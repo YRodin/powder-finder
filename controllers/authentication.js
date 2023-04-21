@@ -1,6 +1,6 @@
 const jwt = require("jwt-simple");
 const User = require("../models/user");
-const keys = require("../config/dev");
+// const keys = require("../config/dev");
 
 function tokenForUser(user) {
   return jwt.encode(
@@ -9,7 +9,7 @@ function tokenForUser(user) {
       iat: Math.round(Date.now() / 1000),
       exp: Math.round(Date.now() / 1000 + 5 * 60 * 60),
     },
-    keys.TOKEN_SECRET
+    process.env.TOKEN_SECRET
   );
 }
 exports.tokenForUser = tokenForUser;
