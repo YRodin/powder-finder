@@ -20,12 +20,13 @@ const SearchForm = () => {
   };
   const dispatch = useDispatch();
   const onSubmit = async (data) => {
-    const radius = data.radius * 1000; //convert to meters
+    // const radius = data.radius * 1000; //convert to meters
+    const radius = radiusValue * 1000 // try using component state radius in order to bypass data handling bug in useform()-controlled radius-range-element
     const cityNState = data.location;
     const [city, state] = cityNState.split(" ").map((string) => string.trim());
     dispatch(populateMatchingResorts({ city, state, radius }));
-  };
 
+  };
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className={styles.searchForm}>
       <Form.Group controlId="formBasicText">
@@ -51,7 +52,7 @@ const SearchForm = () => {
           min="0"
           max="50"
           value={radiusValue}
-          {...register("radius", { required: true })}
+          // {...register("radius", { required: true })}
           onChange={handleRadiusChange}
           isInvalid={errors.radius}
           className={styles.formControl}
