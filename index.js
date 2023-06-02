@@ -9,46 +9,31 @@ const keys = require('./config/keys');
 const passport = require('passport');
 const path = require('path');
 const port = process.env.PORT || 5001;
-
+// Import and execute passport.js configuration
 require('./services/passport');
-
-const { URL } = require('url');
-const Agent = require('socks5-http-client/lib/Agent');
-const fixieSocksUrl = process.env.FIXIE_SOCKS_URL;
-
-const mongooseOptions = {
+// Connect DB
+mongoose.connect(keys.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-};
-
-if (process.env.NODE_ENV === 'production') {
-  mongooseOptions.server = {
-    socketOptions: {
-      agent: new Agent({
-        socksHost: new URL(fixieSocksUrl).hostname,
-        socksPort: new URL(fixieSocksUrl).port,
-        socksUsername: new URL(fixieSocksUrl).username,
-        socksPassword: new URL(fixieSocksUrl).password,
-      }),
-    },
-  };
-}
-
-mongoose.connect(keys.MONGODB_URI, mongooseOptions);
+});
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 
+// Apply API routes
+router(app);
+// Serve static files
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
   app.use(express.static('client/build'));
+  // Catch-all route for client-side routing in React app
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/client/build/index.html'));
   });
+} else {
+  app.use(express.static(path.join(__dirname, 'build')));
 }
-
-router(app);
 
 const server = http.createServer(app);
 server.listen(port);

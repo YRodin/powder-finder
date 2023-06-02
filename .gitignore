@@ -1,5 +1,5 @@
 node_modules/
 client/node_modules/
 .env
-dev.js
 thoughtsAndPrayers.txt
+config/keys/

@@ -27,7 +27,17 @@
   color: white !important;
   font-size: 1em;
 }
-@media (max-width: 767px) {
+@media (max-width: 992px) {
+  .searchForm {
+    position: static;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    margin-top: 15%;
+    border-radius: 0px;
+  }
+}
+@media (max-width: 480px) {
   .searchForm {
     position: static;
     left: auto;

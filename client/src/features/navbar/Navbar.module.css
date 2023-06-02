@@ -1,5 +1,5 @@
 .navbar {
-  height: 15%;
+  /* height: 15%; */
   opacity: 75%;
   font-size: 2rem;
   transition: transform 0.3s;
@@ -14,6 +14,7 @@
 .navbar-collapse {
   flex-grow: 1;
 }
+
 .navbarBrand {
   font-size: 2.5rem !important;
 }
@@ -34,4 +35,41 @@
 }
 .logo {
   height: 6rem;
+}
+
+.slidingNavContainer {
+  position: relative;
+}
+
+@media (max-width: 767px) {
+  .slidingNavLink {
+    display: block;
+    width: auto;
+    height: auto; /* Reset the height to auto */
+    background-color: #122b7e !important;
+    border-radius: 15px;
+  }
+  .centeredNavItems {
+    height: 100%;
+    align-items: center;
+    margin-right: 35%;
+  }
+  .slidingNavContainer {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 35vh;
+    background-color: #122b7e !important;
+    z-index: 9999; /* Ensures the sliding navigation is above other elements */
+  }
+}
+
+.centeredNavItems {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.slidingNavLink:hover {
+  text-shadow: 0 0 5px white, 0 0 10px rgb(245, 1, 1);
 }

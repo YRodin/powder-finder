@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.43934a3c.css",
-    "main.js": "/static/js/main.00b71955.js",
+    "main.css": "/static/css/main.a497f48e.css",
+    "main.js": "/static/js/main.9a36912e.js",
     "static/media/twoMen.jpeg": "/static/media/twoMen.eaec1790fe312d1e297f.jpeg",
     "static/media/powderFinderLogo.png": "/static/media/powderFinderLogo.3bbffc132128747e374a.png",
     "index.html": "/index.html",
     "static/media/custom_marker.svg": "/static/media/custom_marker.25d044a2eeedc0ba553cfbcf1e0dce61.svg",
-    "main.43934a3c.css.map": "/static/css/main.43934a3c.css.map",
-    "main.00b71955.js.map": "/static/js/main.00b71955.js.map"
+    "main.a497f48e.css.map": "/static/css/main.a497f48e.css.map",
+    "main.9a36912e.js.map": "/static/js/main.9a36912e.js.map"
   },
   "entrypoints": [
-    "static/css/main.43934a3c.css",
-    "static/js/main.00b71955.js"
+    "static/css/main.a497f48e.css",
+    "static/js/main.9a36912e.js"
   ]
 }

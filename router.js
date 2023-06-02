@@ -19,5 +19,6 @@ module.exports = function (app) {
   app.get("/api/getpassinfo", dataCollection.getPassInfo);
   app.get("/api/getresortcoordinates", dataCollection.getResortCoordinates);
   app.post("/api/getresortplaceid", dataCollection.getResortPlaceId);
+  // this route is invoked by user resort search
   app.post("/api/resortfinder", resortFinder, weatherInfo);
 };
