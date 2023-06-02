@@ -4,14 +4,35 @@ const dataCollection = require("./controllers/dataCollection");
 const passport = require("passport");
 const ResortInfo = require("./models/resortInfo");
 const { resortFinder } = require("./controllers/resortFinder");
-const {weatherInfo} = require("./controllers/weatherInfo");
+const { weatherInfo } = require("./controllers/weatherInfo");
 const requireAuth = passport.authenticate("jwt", { session: false });
 const requireSignin = passport.authenticate("local", { session: false });
 
 module.exports = function (app) {
+  app.get(
+    "/api/auth/google",
+    passport.authenticate("google", { scope: ["profile"] })
+  ); // client click on "sign in with google" is directed here
+  app.get(
+    "/api/auth/google/callback",
+    passport.authenticate("google", {
+      session: false,
+      failureRedirect: "/login",
+    }),
+    authentication.secureSignin
+  );
+  app.get("/login", function (req, res) {
+    res
+      .status(401)
+      .json({ message: "Authentication failed. Please try again." });
+  }); // googleauth failure redirect route, THIS IS A DRAFT don't forget to normalize error!
+  app.get("/api/user", authentication.validateAndDecodeToken, (req, res) => {
+    const { userName, seasonPass } = req.userInfo;
+    res.json({ userName, seasonPass });
+  });
   app.post("/api/auth/signin", requireSignin, authentication.signin);
   app.post("/api/auth/signup", authentication.signup);
-  app.get("/api/user", requireAuth, authentication.currentUser);
+  // app.get("/api/user", requireAuth, authentication.currentUser);
   app.post("/api/user/addpass", requireAuth, manageUser.addPass);
   app.put("/api/user/updateinfo", requireAuth, manageUser.updateInfo);
   app.delete("/api/user/delete", requireAuth, manageUser.delete);
@@ -19,6 +40,5 @@ module.exports = function (app) {
   app.get("/api/getpassinfo", dataCollection.getPassInfo);
   app.get("/api/getresortcoordinates", dataCollection.getResortCoordinates);
   app.post("/api/getresortplaceid", dataCollection.getResortPlaceId);
-  // this route is invoked by user resort search
   app.post("/api/resortfinder", resortFinder, weatherInfo);
 };

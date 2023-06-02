@@ -1,15 +1,15 @@
-const jwt = require("jwt-simple");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-// const keys = require("../config/dev");
+const keys = require("../config/dev");
 
 function tokenForUser(user) {
-  return jwt.encode(
+  return jwt.sign(
     {
       sub: user._id,
       iat: Math.round(Date.now() / 1000),
       exp: Math.round(Date.now() / 1000 + 5 * 60 * 60),
     },
-    process.env.TOKEN_SECRET
+    keys.TOKEN_SECRET
   );
 }
 exports.tokenForUser = tokenForUser;
@@ -20,6 +20,35 @@ exports.signin = function (req, res, next) {
   const { userName, seasonPass } = req.user;
   res.send({ userName, seasonPass, token });
 };
+
+function tokenWithUserInfo(user) {
+  const timestamp = new Date().getTime();
+  const { userName, seasonPass } = user;
+  return jwt.sign ({ sub: user.id, iat: timestamp, userName, seasonPass }, keys.TOKEN_SECRET );
+}
+
+exports.validateAndDecodeToken = function validateAndDecodeToken(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+  }
+
+  jwt.verify(token, keys.TOKEN_SECRET, function(err, decoded) {
+      if (err) {
+          return res.status(500).json({ error: 'Failed to authenticate token' });
+      }
+      
+      // Attach the decoded user info to the request object
+      req.userInfo = decoded;
+      next();
+  });
+}
+
+exports.secureSignin = function (req, res, next) {
+  const token = tokenWithUserInfo(req.user);
+  res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+  res.redirect('http://localhost:3000/authenticated');;
+}
 
 exports.currentUser = function (req, res, next) {
   console.log(`current user controller is invoked`);
@@ -40,6 +69,8 @@ exports.signup = function (req, res, next) {
       .status(422)
       .send({ error: "You must provide userName and password" });
   }
+
+  // See if a user with the given userName exists
   User.findOne({ userName: userName }).exec((error, existingUser) => {
     if (error) {
       return next(error);
@@ -49,7 +80,7 @@ exports.signup = function (req, res, next) {
       return res.status(422).send({ error: "userName is in use" });
     }
     // If a user with userName does NOT exist, create and save user record
-    const user = new User();
+    const user = new User({authType: 'local'});
     user.userName = userName;
     user.setPassword(password);
     user.save(function (err, user) {
@@ -62,6 +93,5 @@ exports.signup = function (req, res, next) {
       res.send({ userName, seasonPass, token });
     });
   });
+  
 };
-
-

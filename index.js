@@ -1,18 +1,20 @@
 const express = require('express');
+const https = require('https');
 const http = require('http');
 const bodyParser = require('body-parser');
 const app = express();
 const router = require('./router');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const keys = require('./config/keys');
+const keys = require('./');
 const passport = require('passport');
 const path = require('path');
 const port = process.env.PORT || 5001;
+require('dotenv').config();
 // Import and execute passport.js configuration
 require('./services/passport');
 // Connect DB
-mongoose.connect(keys.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -34,7 +36,17 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 } else {
   app.use(express.static(path.join(__dirname, 'build')));
 }
-
-const server = http.createServer(app);
-server.listen(port);
-console.log('Server listening on:', port);
+// check current einronment, run self signed https in dev, and http in prod in order to implement googleauth20 feature
+let server;
+if (process.env.NODE_ENV === 'development') {
+  const options = {
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem')
+  };
+  server = https.createServer(options, app);
+} else {
+  server = http.createServer(app);
+}
+server.listen(port, () => {
+  console.log('Server listening on:', port);
+});

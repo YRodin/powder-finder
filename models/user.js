@@ -5,10 +5,12 @@ var jwt = require('jsonwebtoken');
 
 // define user model
 const UserSchema = new Schema({
-  userName: { type: String, unique: true},
+  userName: { type: String, unique: true },
   seasonPass: String,
   hash: String,
-  salt: String
+  salt: String,
+  googleId: String,
+  authType: { type: String, required: true }
 });
 
 // define auth user methods

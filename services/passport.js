@@ -1,11 +1,9 @@
 const passport = require('passport');
 const User = require('../models/user');
-const keys = require('../config/keys');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-
 const JwtStrategy = require('passport-jwt').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
-
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 //define local log in strategy
 const localOptions = {
   usernameField: 'userName',
@@ -27,7 +25,7 @@ const localLogin = new LocalStrategy(localOptions,
 // Setup options for JWT Strategy
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: keys.TOKEN_SECRET
+  secretOrKey: process.env.TOKEN_SECRET
 };
 const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
   console.log(`JWT login passport service is invoked inside jwt login!`);
@@ -43,7 +41,33 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
   });
 });
 
+ // define google oauth20 strategy
+const googleAuth20 = new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "https://localhost:5001/api/auth/google/callback"
+},
+async function(accessToken, refreshToken, profile, cb) {
+  try {
+    let user = await User.findOne({ userName: profile.displayName });
+    if (!user) {
+      // User not found, create a new user
+      user = new User({
+        userName: profile.displayName,
+        googleId: profile.id,
+        authType: 'google'
+      });
+      // Save the user to the database
+      await user.save();
+    }
+    // Send the user information to the next middleware
+    cb(null, user);
+  } catch (err) {
+    cb(err, null);
+  }
+});
 // mount local strategy to passport
 passport.use(localLogin);
 passport.use(jwtLogin);
+passport.use(googleAuth20);
 console.log('Local and JWT strategies have been mounted to passport');
