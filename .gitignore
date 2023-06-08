@@ -3,3 +3,4 @@ client/node_modules/
 *.env
 thoughtsAndPrayers.txt
 config/keys
+oauth20Errors.txt

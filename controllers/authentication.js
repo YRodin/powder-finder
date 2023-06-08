@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const keys = require("../config/dev");
 
 function tokenForUser(user) {
   return jwt.sign(
@@ -24,16 +23,19 @@ exports.signin = function (req, res, next) {
 function tokenWithUserInfo(user) {
   const timestamp = new Date().getTime();
   const { userName, seasonPass } = user;
-  return jwt.sign ({ sub: user.id, iat: timestamp, userName, seasonPass }, keys.TOKEN_SECRET );
+  console.log(`below are username and seasonpass`);
+  console.log(userName, seasonPass);
+  return jwt.sign ({ sub: user.id, iat: timestamp, userName, seasonPass }, process.env.TOKEN_SECRET );
 }
 
 exports.validateAndDecodeToken = function validateAndDecodeToken(req, res, next) {
   const token = req.cookies.token;
+  console.log(`cookie token retreived in authenticatation.js is ${token}`);
   if (!token) {
       return res.status(401).json({ error: 'No token provided' });
   }
 
-  jwt.verify(token, keys.TOKEN_SECRET, function(err, decoded) {
+  jwt.verify(token, process.env.TOKEN_SECRET, function(err, decoded) {
       if (err) {
           return res.status(500).json({ error: 'Failed to authenticate token' });
       }

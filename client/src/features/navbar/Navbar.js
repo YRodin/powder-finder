@@ -53,6 +53,11 @@ const NavBar = () => {
         >
           <Nav className={styles.centeredNavItems}>
             <Nav.Item>
+              <a href="http://localhost:5001/api/auth/google">
+                Sign in with Google
+              </a>
+            </Nav.Item>
+            <Nav.Item>
               {!isLoggedIn && (
                 <Nav.Link
                   as={Link}

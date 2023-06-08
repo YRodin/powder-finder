@@ -45,7 +45,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 const googleAuth20 = new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://localhost:5001/api/auth/google/callback"
+  callbackURL: "http://localhost:5001/api/auth/google/callback"
 },
 async function(accessToken, refreshToken, profile, cb) {
   try {

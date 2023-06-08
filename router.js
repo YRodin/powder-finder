@@ -17,15 +17,10 @@ module.exports = function (app) {
     "/api/auth/google/callback",
     passport.authenticate("google", {
       session: false,
-      failureRedirect: "/login",
+      failureRedirect: process.env.FAILURE_REDIRECT_URL,
     }),
     authentication.secureSignin
   );
-  app.get("/login", function (req, res) {
-    res
-      .status(401)
-      .json({ message: "Authentication failed. Please try again." });
-  }); // googleauth failure redirect route, THIS IS A DRAFT don't forget to normalize error!
   app.get("/api/user", authentication.validateAndDecodeToken, (req, res) => {
     const { userName, seasonPass } = req.userInfo;
     res.json({ userName, seasonPass });
