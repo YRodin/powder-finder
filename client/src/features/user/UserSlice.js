@@ -7,7 +7,7 @@ const initialState = {
   isLoggingIn: false,
   isSigningUp: false,
   isEditing: false,
-  token: null,
+  // token: null,
   seasonPass: null,
   userName: null,
 };
@@ -18,7 +18,7 @@ export const signin = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "https://localhost:5001/api/auth/signin",
+        "http://localhost:5001/api/auth/signin",
         data
       );
       return response.data;
@@ -34,7 +34,7 @@ export const signup = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "https://localhost:5001/api/auth/signup",
+        "http://localhost:5001/api/auth/signup",
         data
       );
       return response.data;
@@ -54,7 +54,7 @@ export const editUser = createAsyncThunk(
         Authorization: `Bearer ${data.token}`,
       };
       const response = await axios.put(
-        "https://localhost:5001/api/user/updateinfo",
+        "http://localhost:5001/api/user/updateinfo",
         data,
         { headers }
       );
@@ -75,7 +75,7 @@ export const deleteUser = createAsyncThunk(
         Authorization: `Bearer ${token}`,
       };
       const response = await axios.delete(
-        "https://localhost:5001/api/user/delete",
+        "http://localhost:5001/api/user/delete",
         { headers }
       );
       return response.data;
@@ -119,7 +119,7 @@ export const userSlice = createSlice({
       })
       .addCase(signin.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.token = action.payload.token;
+        // state.token = action.payload.token;
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "success";

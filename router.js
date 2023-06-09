@@ -19,7 +19,7 @@ module.exports = function (app) {
       session: false,
       failureRedirect: process.env.FAILURE_REDIRECT_URL,
     }),
-    authentication.secureSignin
+    authentication.signinWithGoogle
   );
   app.get("/api/user", authentication.validateAndDecodeToken, (req, res) => {
     const { userName, seasonPass } = req.userInfo;
@@ -28,7 +28,6 @@ module.exports = function (app) {
   app.post("/api/auth/signin", requireSignin, authentication.signin);
   app.post("/api/auth/signup", authentication.signup);
   // app.get("/api/user", requireAuth, authentication.currentUser);
-  app.post("/api/user/addpass", requireAuth, manageUser.addPass);
   app.put("/api/user/updateinfo", requireAuth, manageUser.updateInfo);
   app.delete("/api/user/delete", requireAuth, manageUser.delete);
   // next 3 routes are executed once when app is deployed to retreive all static data necessary to process user requests; refactor to use next(); and chain them in the same route when ready to consolidate
