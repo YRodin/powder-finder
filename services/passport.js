@@ -34,6 +34,7 @@ const cookieExtractor = function (req) {
   if (req && req.cookies) {
     token = req.cookies["token"];
   }
+  console.log(`passport.js cookieExtractor token is ${token}`);
   return token;
 };
 

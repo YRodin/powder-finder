@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -22,9 +22,13 @@ const EditUserForm = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userName, token } = useSelector((state) => state.user);
+  const { userName, seasonPass } = useSelector((state) => state.user);
   const error = useSelector((state) => state.user.error);
   const showModal = location.pathname === "/user/edit";
+
+  useEffect(() => {
+    setValue("seasonPass", seasonPass || "");
+  }, [seasonPass, setValue]);
 
   function handleDropdownChange(e) {
     setValue("seasonPass", e.target.value);
@@ -39,10 +43,17 @@ const EditUserForm = () => {
   };
 
   function onSubmit(data) {
-    // dispatch api Put request and save data in redux state
-    const dataAndToken = { ...data, token };
-    dispatch(editUser(dataAndToken));
-    // redirect to home page
+    // Only include seasonPass in the user data if the user has made a change
+    if (!data.seasonPass.startsWith('Current pass is: ')) {
+      // Extract pass name from string
+      let passName = data.seasonPass;
+      if (passName !== 'Please select a pass') {
+        data.seasonPass = passName;
+      }
+    }
+    // Dispatch API PUT request and save data in Redux state
+    dispatch(editUser(data));
+    // Redirect to home page
     navigate("/user");
   }
   return (
@@ -64,11 +75,11 @@ const EditUserForm = () => {
           <Form.Group className="mb-3" controlId="dropdownField">
             <Form.Label htmlFor="dropdownField">Update Season Pass</Form.Label>
             <Form.Control
-              placeholder="Dropdown menu to be built"
               as="select"
               onChange={handleDropdownChange}
-              {...register("seasonPass")}
+              {...register("seasonPass", { defaultValue: seasonPass || "" })}
             >
+              <option value="">Please select a pass</option>
               <option value="ikon">ikon</option>
               <option value="epic">epic</option>
               <option value="indy">indy</option>

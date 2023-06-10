@@ -7,6 +7,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "../user/UserSlice";
 import styles from "./Navbar.module.css";
 import logo from "./powderFinderLogo.png";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const NavBar = () => {
   const dispatch = useDispatch();
@@ -53,7 +54,7 @@ const NavBar = () => {
         >
           <Nav className={styles.centeredNavItems}>
             <Nav.Item>
-              <a href="http://localhost:5001/api/auth/google">
+              <a href={`${baseURL}/api/auth/google`}>
                 Sign in with Google
               </a>
             </Nav.Item>

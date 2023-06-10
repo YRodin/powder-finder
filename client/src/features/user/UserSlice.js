@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { normalizeErrorResponse } from "../utilities/errorUtils";
+const baseURl = process.env.REACT_APP_API_BASE_URL;
 
 const initialState = {
   isLoggedIn: false,
   isLoggingIn: false,
   isSigningUp: false,
   isEditing: false,
-  // token: null,
   seasonPass: null,
   userName: null,
 };
@@ -18,7 +18,7 @@ export const signin = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:5001/api/auth/signin",
+        `${baseURl}/api/auth/signin`,
         data
       );
       return response.data;
@@ -34,7 +34,7 @@ export const signup = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:5001/api/auth/signup",
+        `${baseURl}/api/auth/signup`,
         data
       );
       return response.data;
@@ -49,14 +49,12 @@ export const editUser = createAsyncThunk(
   "user/editUser",
   async (data, thunkAPI) => {
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${data.token}`,
-      };
       const response = await axios.put(
-        "http://localhost:5001/api/user/updateinfo",
+        `${baseURl}/api/user/updateinfo`,
         data,
-        { headers }
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -68,15 +66,13 @@ export const editUser = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
-  async (token, thunkAPI) => {
+  async ( thunkAPI ) => {
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
       const response = await axios.delete(
-        "http://localhost:5001/api/user/delete",
-        { headers }
+        `${baseURl}/api/user/delete`,
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -119,7 +115,7 @@ export const userSlice = createSlice({
       })
       .addCase(signin.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        // state.token = action.payload.token;
+    
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "success";
@@ -136,7 +132,6 @@ export const userSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.token = action.payload.token;
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "fulfilled";
@@ -154,7 +149,6 @@ export const userSlice = createSlice({
       .addCase(editUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLoggedIn = true;
-        state.token = action.payload.token;
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "fulfilled";
