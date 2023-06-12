@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router";
 import { useForm } from "react-hook-form";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -8,43 +6,41 @@ import Modal from "react-bootstrap/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { signin } from "./UserSlice";
 import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
-import { clearError } from "./UserSlice";
+import { clearError, closeSignInModal, openSignUpModal } from "./UserSlice";
 import styles from "./User.module.css";
+import { ButtonGroup } from "react-bootstrap";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm();
-  const location = useLocation();
+
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { isLoggedIn } = useSelector((state) => state.user);
-  const error = useSelector((state) => state.user.error);
-  // if user is logged in go to /user
+  const { isLoggedIn, showSignInModal, showSignUpModal, error } = useSelector((state) => state.user);
+  // if user is logged in show modal
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/user");
+      dispatch(closeSignInModal());
     }
-  }, [isLoggedIn]);
+}, [isLoggedIn, dispatch]);
 
-  const onSubmit = function (data) {
+  const onSubmit = async function (data) {
     dispatch(signin(data));
+    reset();
   };
   const handleErrorDismiss = () => {
     dispatch(clearError());
   };
   const handleHide = () => {
     dispatch(clearError());
-    navigate("/");
+    dispatch(closeSignInModal());
   };
-  const customModalStyle = {
-    content: {
-      backgroundColor: "red",
-    },
-  };
-  const showModal = location.pathname === "/user/login";
+ 
+  const showModal = showSignInModal;
 
   return (
     <Modal show={showModal} onHide={handleHide}>
@@ -53,6 +49,13 @@ const LoginForm = () => {
       </Modal.Header>
       <Modal.Body className={styles.modalStyle}>
         <Form onSubmit={handleSubmit(onSubmit)}>
+          <Button
+            href={`${baseURL}/api/auth/google`}
+            variant="primary"
+            type="submit"
+          >
+            Sign in with Google
+          </Button>
           <Form.Group className="mb-3">
             <Form.Label>User Name</Form.Label>
             <Form.Control
@@ -72,10 +75,19 @@ const LoginForm = () => {
             />
             {errors.password && <p>This field is required</p>}
           </Form.Group>
-
-          <Button variant="primary" type="submit" >
-            Log in!
+          <ButtonGroup>
+          <Button variant="primary" type="submit">
+            Log in
           </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              dispatch(closeSignInModal())
+              dispatch(openSignUpModal())
+            }}>
+            Sign up
+          </Button>
+          </ButtonGroup>
           <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>
       </Modal.Body>

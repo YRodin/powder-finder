@@ -7,17 +7,13 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "../user/UserSlice";
 import styles from "./Navbar.module.css";
 import logo from "./powderFinderLogo.png";
+import { openSingInModal, openSettingsModal, openSignUpModal } from "../user/UserSlice";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const NavBar = () => {
   const dispatch = useDispatch();
   const { isLoggedIn, userName } = useSelector((state) => state.user);
   const location = useLocation();
-  const [showLoginDropdown, setShowLoginDropdown] = useState(false);
-
-  useEffect(() => {
-    setShowLoginDropdown(location.pathname === "/user/login");
-  }, [location.pathname]);
 
   // control visibility of expanded navbar.collapse element and make it dissapear on user click elsewhere on screen
   const navBarRef = useRef(null);
@@ -33,6 +29,7 @@ const NavBar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   return (
     <Navbar
       variant="dark"
@@ -54,41 +51,25 @@ const NavBar = () => {
         >
           <Nav className={styles.centeredNavItems}>
             <Nav.Item>
-              <a href={`${baseURL}/api/auth/google`}>
-                Sign in with Google
-              </a>
-            </Nav.Item>
-            <Nav.Item>
               {!isLoggedIn && (
                 <Nav.Link
-                  as={Link}
-                  to="/user/signup"
                   className={styles.slidingNavLink}
-                  onClick={() => setNavExpanded(false)}
+                  onClick={
+                    () => {
+                      dispatch(openSingInModal())
+                      setNavExpanded(false)}}
                 >
-                  Sign Up
-                </Nav.Link>
-              )}
-            </Nav.Item>
-            <Nav.Item>
-              {!isLoggedIn && (
-                <Nav.Link
-                  as={Link}
-                  to="/user/login"
-                  className={styles.slidingNavLink}
-                  onClick={() => setNavExpanded(false)}
-                >
-                  Sign In
+                  Sign in
                 </Nav.Link>
               )}
             </Nav.Item>
             <Nav.Item>
               {isLoggedIn && (
                 <Nav.Link
-                  as={Link}
-                  to="/user/edit"
                   className={styles.slidingNavLink}
-                  onClick={() => setNavExpanded(false)}
+                  onClick={() => {
+                    dispatch(openSettingsModal())
+                    setNavExpanded(false)}}
                 >
                   User Settings
                 </Nav.Link>

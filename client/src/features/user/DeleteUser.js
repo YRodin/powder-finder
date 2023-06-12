@@ -1,31 +1,22 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUser } from "./UserSlice";
-import { useLocation, useNavigate } from "react-router-dom";
+import { deleteUser, closeDeleteUserModal } from "./UserSlice";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import styles from "./User.module.css";
 
 const DeleteUser = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoggedIn, token } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/user");
-    }
-  }, [isLoggedIn]);
+  const { isLoggedIn, showDeleteUserModal } = useSelector((state) => state.user);
 
   function submitHandler() {
-    dispatch(deleteUser(token));
-    navigate("/");
+    dispatch(deleteUser());
+    dispatch(closeDeleteUserModal());
   }
   const handleHide = () => {
-    navigate("/");
+    dispatch(closeDeleteUserModal());
   };
-  const showModal = location.pathname === "/user/delete";
+  const showModal = showDeleteUserModal;
   return (
     <Modal show={showModal} onHide={handleHide}>
       <Modal.Header className={styles.modalStyle} closeButton>

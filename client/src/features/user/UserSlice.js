@@ -10,6 +10,10 @@ const initialState = {
   isEditing: false,
   seasonPass: null,
   userName: null,
+  showSignInModal: false,
+  showSignUpModal: false,
+  showSettingsModal: false,
+  showDeleteUserModal: false,
 };
 
 // async signin request to api; returns jwt;
@@ -104,8 +108,33 @@ export const userSlice = createSlice({
     signinOauth20: (state, action) => {
       state.isLoggedIn = true;
       state.userName = action.payload.userName;
-      state.seasonPass = action.payload.seasonPass
+      state.seasonPass = action.payload.seasonPass;
     },
+    openSingInModal: (state) => {
+      state.showSignInModal = true;
+    },
+    closeSignInModal: (state) => {
+      state.showSignInModal = false;
+    },
+    openSignUpModal: (state) => {
+      state.showSignUpModal = true;
+    },
+    closeSignUpModal: (state) => {
+      state.showSignUpModal = false;
+    },
+    openSettingsModal: (state) => {
+      state.showSettingsModal = true;
+    },
+    closeSettingsModal: (state) => {
+      state.showSettingsModal = false;
+    },
+    openDeleteUserModal: (state) => {
+      state.showDeleteUserModal = true;
+    },
+    closeDeleteUserModal: (state) => {
+      state.showDeleteUserModal = false;
+    }
+
   },
   extraReducers: (builder) => {
     builder
@@ -179,6 +208,14 @@ export const {
   resetIsLoggingin,
   resetIsSigningUp,
   resetIsEditing,
-  signinOauth20
+  signinOauth20,
+  openSignUpModal,
+  closeSignUpModal,
+  openSingInModal,
+  closeSignInModal,
+  openSettingsModal,
+  closeSettingsModal,
+  openDeleteUserModal,
+  closeDeleteUserModal
 } = userSlice.actions;
 export default userSlice.reducer;

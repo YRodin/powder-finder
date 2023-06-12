@@ -3,11 +3,13 @@ import { useForm } from "react-hook-form";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
-import { editUser } from "./UserSlice";
-import { useNavigate, Link } from "react-router-dom";
 import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
-import { clearError } from "./UserSlice";
-import { useLocation } from "react-router";
+import {
+  editUser,
+  clearError,
+  closeSettingsModal,
+  openDeleteUserModal,
+} from "./UserSlice";
 import Modal from "react-bootstrap/Modal";
 import styles from "./User.module.css";
 
@@ -16,15 +18,18 @@ const EditUserForm = () => {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const location = useLocation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { userName, seasonPass } = useSelector((state) => state.user);
+
+  const { userName, seasonPass, showSettingsModal } = useSelector(
+    (state) => state.user
+  );
   const error = useSelector((state) => state.user.error);
-  const showModal = location.pathname === "/user/edit";
+
+  const showModal = showSettingsModal;
 
   useEffect(() => {
     setValue("seasonPass", seasonPass || "");
@@ -39,22 +44,22 @@ const EditUserForm = () => {
 
   const handleHide = () => {
     dispatch(clearError());
-    navigate("/");
+    dispatch(closeSettingsModal());
   };
 
   function onSubmit(data) {
     // Only include seasonPass in the user data if the user has made a change
-    if (!data.seasonPass.startsWith('Current pass is: ')) {
+    if (!data.seasonPass.startsWith("Current pass is: ")) {
       // Extract pass name from string
       let passName = data.seasonPass;
-      if (passName !== 'Please select a pass') {
+      if (passName !== "Please select a pass") {
         data.seasonPass = passName;
       }
     }
     // Dispatch API PUT request and save data in Redux state
     dispatch(editUser(data));
-    // Redirect to home page
-    navigate("/user");
+    dispatch(closeSettingsModal());
+    reset();
   }
   return (
     <Modal show={showModal} onHide={handleHide}>
@@ -101,7 +106,10 @@ const EditUserForm = () => {
           <Button variant="primary" type="submit">
             Apply Changes
           </Button>
-          <Button variant="danger" as={Link} to="/user/delete">
+          <Button variant="danger" onClick={() => {
+            dispatch(closeSettingsModal())
+            dispatch(openDeleteUserModal())
+          }}>
             Delete Account
           </Button>
           <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
