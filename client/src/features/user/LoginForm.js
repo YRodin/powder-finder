@@ -16,17 +16,19 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm();
 
   const dispatch = useDispatch();
-  const { isLoggedIn, showSignInModal, showSignUpModal, error } = useSelector((state) => state.user);
+  const { isLoggedIn, showSignInModal, showSignUpModal, error } = useSelector(
+    (state) => state.user
+  );
   // if user is logged in show modal
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(closeSignInModal());
     }
-}, [isLoggedIn, dispatch]);
+  }, [isLoggedIn, dispatch]);
 
   const onSubmit = async function (data) {
     dispatch(signin(data));
@@ -39,23 +41,27 @@ const LoginForm = () => {
     dispatch(clearError());
     dispatch(closeSignInModal());
   };
- 
+
   const showModal = showSignInModal;
 
   return (
     <Modal show={showModal} onHide={handleHide}>
-      <Modal.Header className={styles.modalStyle} closeButton>
-        <Modal.Title>Log in</Modal.Title>
+      <Modal.Header className={styles.modalStyle } closeButton>
+        <Modal.Title className={styles.centeredTitle} >Log in</Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modalStyle}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Button
             href={`${baseURL}/api/auth/google`}
+            className={styles.fullWidthButton}
             variant="primary"
             type="submit"
           >
             Sign in with Google
           </Button>
+          <div className={styles.separator}>
+            <span>Or</span>
+          </div>
           <Form.Group className="mb-3">
             <Form.Label>User Name</Form.Label>
             <Form.Control
@@ -75,18 +81,19 @@ const LoginForm = () => {
             />
             {errors.password && <p>This field is required</p>}
           </Form.Group>
-          <ButtonGroup>
-          <Button variant="primary" type="submit">
-            Log in
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              dispatch(closeSignInModal())
-              dispatch(openSignUpModal())
-            }}>
-            Sign up
-          </Button>
+          <ButtonGroup className={styles.fullWidthButton}>
+            <Button variant="primary" type="submit">
+              Log in
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                dispatch(closeSignInModal());
+                dispatch(openSignUpModal());
+              }}
+            >
+              Sign up
+            </Button>
           </ButtonGroup>
           <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>

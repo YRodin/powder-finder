@@ -20,11 +20,11 @@ const DeleteUser = () => {
   return (
     <Modal show={showModal} onHide={handleHide}>
       <Modal.Header className={styles.modalStyle} closeButton>
-        <Modal.Title>Delete Account</Modal.Title>
+        <Modal.Title className={styles.centeredTitle}>Sure you want to leave us? Our server will miss your data! </Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modalStyle}>
-        <Button variant="primary" type="button" onClick={submitHandler}>
-          Bon Voyage!
+        <Button variant="primary" type="button" onClick={submitHandler} className={styles.fullWidthButton}>
+          Shred everything!
         </Button>
       </Modal.Body>
     </Modal>

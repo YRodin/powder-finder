@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
@@ -24,7 +25,7 @@ const EditUserForm = () => {
 
   const dispatch = useDispatch();
 
-  const { userName, seasonPass, showSettingsModal } = useSelector(
+  const { userName, seasonPass, showSettingsModal, googleAuth } = useSelector(
     (state) => state.user
   );
   const error = useSelector((state) => state.user.error);
@@ -64,18 +65,20 @@ const EditUserForm = () => {
   return (
     <Modal show={showModal} onHide={handleHide}>
       <Modal.Header className={styles.modalStyle} closeButton>
-        <Modal.Title>User Settings</Modal.Title>
+        <Modal.Title className={styles.centeredTitle}>User Settings</Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modalStyle}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group className="mb-3" controlId="textField">
-            <Form.Label htmlFor="textField">Update User Name</Form.Label>
-            <Form.Control
-              type="userName"
-              placeholder={userName}
-              {...register("userName")}
-            />
-          </Form.Group>
+          {!googleAuth && (
+            <Form.Group className="mb-3" controlId="textField">
+              <Form.Label htmlFor="textField">Update User Name</Form.Label>
+              <Form.Control
+                type="userName"
+                placeholder={userName}
+                {...register("userName")}
+              />
+            </Form.Group>
+          )}
 
           <Form.Group className="mb-3" controlId="dropdownField">
             <Form.Label htmlFor="dropdownField">Update Season Pass</Form.Label>
@@ -92,26 +95,32 @@ const EditUserForm = () => {
             </Form.Control>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label htmlFor="formBasicPassword">
-              Update your Password
-            </Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              {...register("password")}
-            />
-          </Form.Group>
-
-          <Button variant="primary" type="submit">
-            Apply Changes
-          </Button>
-          <Button variant="danger" onClick={() => {
-            dispatch(closeSettingsModal())
-            dispatch(openDeleteUserModal())
-          }}>
-            Delete Account
-          </Button>
+          {!googleAuth && (
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label htmlFor="formBasicPassword">
+                Update your Password
+              </Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                {...register("password")}
+              />
+            </Form.Group>
+          )}
+          <ButtonGroup className={styles.fullWidthButton}>
+            <Button variant="primary" type="submit">
+              Apply Changes
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                dispatch(closeSettingsModal());
+                dispatch(openDeleteUserModal());
+              }}
+            >
+              Delete Account
+            </Button>
+          </ButtonGroup>
           <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>
       </Modal.Body>

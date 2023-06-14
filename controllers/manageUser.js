@@ -38,7 +38,6 @@ exports.updateInfo = async (req, res, next) => {
 
 exports.delete = function (req, res, next) {
   // delete DB entry
-  // redirect to /home
   User.findByIdAndDelete(req.user._id, (err, user) => {
     if (err) {
       return next(err);

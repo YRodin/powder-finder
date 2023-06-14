@@ -48,17 +48,6 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 } else {
   app.use(express.static(path.join(__dirname, 'build')));
 }
-// check current einronment, run self signed https in dev, and http in prod in order to implement googleauth20 feature
-// let server;
-// if (process.env.NODE_ENV === 'development') {
-//   const options = {
-//     key: fs.readFileSync('./key.pem'),
-//     cert: fs.readFileSync('./cert.pem')
-//   };
-//   server = https.createServer(options, app);
-// } else {
-//   server = http.createServer(app);
-// }
 const server = http.createServer(app);
 server.listen(port, () => {
   console.log('Server listening on:', port);

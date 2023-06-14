@@ -4,6 +4,7 @@ import { normalizeErrorResponse } from "../utilities/errorUtils";
 const baseURl = process.env.REACT_APP_API_BASE_URL;
 
 const initialState = {
+  googleAuth: false,
   isLoggedIn: false,
   isLoggingIn: false,
   isSigningUp: false,
@@ -23,7 +24,10 @@ export const signin = createAsyncThunk(
     try {
       const response = await axios.post(
         `${baseURl}/api/auth/signin`,
-        data
+        data,
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -39,7 +43,10 @@ export const signup = createAsyncThunk(
     try {
       const response = await axios.post(
         `${baseURl}/api/auth/signup`,
-        data
+        data,
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -107,6 +114,7 @@ export const userSlice = createSlice({
     },
     signinOauth20: (state, action) => {
       state.isLoggedIn = true;
+      state.googleAuth = true;
       state.userName = action.payload.userName;
       state.seasonPass = action.payload.seasonPass;
     },

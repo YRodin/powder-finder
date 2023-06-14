@@ -45,10 +45,14 @@ const jwtOptions = {
 
 const jwtLogin = new JwtStrategy(jwtOptions, function (payload, done) {
   User.findById(payload.sub, function (err, user) {
+    console.log('below is payload.sub from jwt login passport strategy');
+    console.log(payload.sub);
     if (err) {
       return done(err, false);
     }
     if (user) {
+      console.log('below is user obj passed to delete middleware in api/delete endpoint');
+      console.log(user);
       done(null, user);
     } else {
       done(null, false);

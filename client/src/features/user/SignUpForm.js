@@ -42,7 +42,7 @@ function SignUpForm(props) {
   return (
     <Modal show={showModal} onHide={hideHandler}>
       <Modal.Header className={styles.modalStyle} closeButton>
-        <Modal.Title>Sign Up</Modal.Title>
+        <Modal.Title className={styles.centeredTitle}>Sign Up</Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modalStyle}>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -62,7 +62,7 @@ function SignUpForm(props) {
               {...register("password", { required: "Required" })}
             />
           </Form.Group>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" className={styles.fullWidthButton}>
             Submit
           </Button>
           <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />

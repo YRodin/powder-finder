@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 exports.tokenForUser = function (user) {
+  console.log('following is user._id passed into jwt.sign');
+  console.log(user._id);
   return jwt.sign(
     {
       sub: user._id,
@@ -13,15 +15,19 @@ exports.tokenForUser = function (user) {
 }
 
 exports.signin = function (req, res, next) {
-  const token = exports.tokenForUser(req.user._id);
+  console.log('req.user inside exports.signin is');
+  console.log(req.user);
+  const token = exports.tokenForUser(req.user);
   const { userName, seasonPass } = req.user;
-  res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+  res.cookie('token', token, { domain: 'localhost', path: '/', sameSite: 'strict', secure: false, httpOnly: true });
+
   res.status(200).send({ userName, seasonPass });
 };
 
 exports.signinWithGoogle = function (req, res, next) {
   const token = tokenWithUserInfo(req.user);
-  res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+  res.cookie('token', token, { domain: 'localhost', path: '/', sameSite: 'strict', secure: false, httpOnly: true });
+
   res.redirect('http://localhost:3000/authenticated');
 }
 
@@ -83,9 +89,10 @@ exports.signup = function (req, res, next) {
         return next(err);
       }
       // Repond to request indicating the user was created
-      const token = exports.tokenForUser(user._id);
+      const token = exports.tokenForUser(user);
       const { userName, seasonPass } = user;
-      res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+      res.cookie('token', token, { domain: 'localhost', path: '/', sameSite: 'strict', secure: false, httpOnly: true });
+
       res.status(200).send({ userName, seasonPass });
     });
   });
