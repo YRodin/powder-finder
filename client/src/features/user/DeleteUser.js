@@ -4,14 +4,17 @@ import { deleteUser, closeDeleteUserModal } from "./UserSlice";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import styles from "./User.module.css";
+import { useNavigate }  from "react-router-dom";
 
 const DeleteUser = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoggedIn, showDeleteUserModal } = useSelector((state) => state.user);
 
   function submitHandler() {
     dispatch(deleteUser());
     dispatch(closeDeleteUserModal());
+    navigate("/")
   }
   const handleHide = () => {
     dispatch(closeDeleteUserModal());

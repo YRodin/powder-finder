@@ -7,9 +7,9 @@ import styles from '../utilities/loading/Loading.module.css';
 
 function Authenticated() {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn)
+  const userStatus = useSelector((state) => state.user.status)
   useEffect(() => {
-    axios.get('http://localhost:5001/api/user', {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user`, {
       withCredentials: true
   })
       .then(response => {
@@ -23,7 +23,7 @@ function Authenticated() {
 
   return (
     <div>
-      {!isLoggedIn && <ReactLoading
+      {userStatus === "loading" && <ReactLoading
           type="cubes"
           color="rgba(214, 222, 232, 0.985)"
           height="10%"

@@ -8,6 +8,8 @@ const { weatherInfo } = require("./controllers/weatherInfo");
 const requireAuth = passport.authenticate("jwt", { session: false });
 const requireSignin = passport.authenticate("local", { session: false });
 
+
+
 module.exports = function (app) {
   app.get(
     "/api/auth/google",
@@ -15,12 +17,9 @@ module.exports = function (app) {
   ); // client click on "sign in with google" is directed here
   app.get(
     "/api/auth/google/callback",
-    passport.authenticate("google", {
-      session: false,
-      failureRedirect: process.env.FAILURE_REDIRECT_URL,
-    }),
+    authentication.googleAuthErrorHandler(),
     authentication.signinWithGoogle
-  );
+  );;
   app.get("/api/user", authentication.validateAndDecodeToken, (req, res) => {
     const { userName, seasonPass } = req.userInfo;
     res.json({ userName, seasonPass });

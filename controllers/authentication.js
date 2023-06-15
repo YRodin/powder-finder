@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const passport = require("passport");
 
 exports.tokenForUser = function (user) {
-  console.log('following is user._id passed into jwt.sign');
+  console.log("following is user._id passed into jwt.sign");
   console.log(user._id);
   return jwt.sign(
     {
@@ -12,45 +13,88 @@ exports.tokenForUser = function (user) {
     },
     process.env.TOKEN_SECRET
   );
-}
+};
 
 exports.signin = function (req, res, next) {
-  console.log('req.user inside exports.signin is');
+  console.log("req.user inside exports.signin is");
   console.log(req.user);
   const token = exports.tokenForUser(req.user);
   const { userName, seasonPass } = req.user;
-  res.cookie('token', token, { domain: 'localhost', path: '/', sameSite: 'strict', secure: false, httpOnly: true });
+  res.cookie("token", token, {
+    domain: "localhost",
+    path: "/",
+    sameSite: "strict",
+    secure: false,
+    httpOnly: true,
+  });
 
   res.status(200).send({ userName, seasonPass });
 };
 
 exports.signinWithGoogle = function (req, res, next) {
   const token = tokenWithUserInfo(req.user);
-  res.cookie('token', token, { domain: 'localhost', path: '/', sameSite: 'strict', secure: false, httpOnly: true });
+  res.cookie("token", token, {
+    domain: "localhost",
+    path: "/",
+    sameSite: "strict",
+    secure: false,
+    httpOnly: true,
+  });
+  res.redirect(`${process.env.CLIENT_URL}/authenticated`);
+};
 
-  res.redirect('http://localhost:3000/authenticated');
-}
+exports.googleAuthErrorHandler = function () {
+  return function (req, res, next) {
+    passport.authenticate(
+      "google",
+      { session: false },
+      function (err, user, info) {
+        if (err) {
+          return res.redirect(
+            process.env.FAILURE_REDIRECT_URL +
+              "?error=" +
+              encodeURIComponent(err.message)
+          );
+        }
+        if (!user) {
+          return res.redirect(
+            process.env.FAILURE_REDIRECT_URL + "?error=Authentication%20failed"
+          );
+        }
+        req.user = user;
+        next();
+      }
+    )(req, res, next);
+  };
+};
 
 function tokenWithUserInfo(user) {
   const timestamp = new Date().getTime();
   const { userName, seasonPass } = user;
-  return jwt.sign ({ sub: user.id, iat: timestamp, userName, seasonPass }, process.env.TOKEN_SECRET );
+  return jwt.sign(
+    { sub: user.id, iat: timestamp, userName, seasonPass },
+    process.env.TOKEN_SECRET
+  );
 }
 
-exports.validateAndDecodeToken = function validateAndDecodeToken(req, res, next) {
+exports.validateAndDecodeToken = function validateAndDecodeToken(
+  req,
+  res,
+  next
+) {
   const token = req.cookies.token;
   if (!token) {
-      return res.status(401).json({ error: 'No token provided' });
+    return res.status(401).json({ error: "No token provided" });
   }
-  jwt.verify(token, process.env.TOKEN_SECRET, function(err, decoded) {
-      if (err) {
-          return res.status(500).json({ error: 'Failed to authenticate token' });
-      }
-      // Attach the decoded user info to the request object
-      req.userInfo = decoded;
-      next();
+  jwt.verify(token, process.env.TOKEN_SECRET, function (err, decoded) {
+    if (err) {
+      return res.status(500).json({ error: "Failed to authenticate token" });
+    }
+    // Attach the decoded user info to the request object
+    req.userInfo = decoded;
+    next();
   });
-}
+};
 
 exports.currentUser = function (req, res, next) {
   User.findById(req.user._id, (err, user) => {
@@ -81,7 +125,7 @@ exports.signup = function (req, res, next) {
       return res.status(422).send({ error: "userName is in use" });
     }
     // If a user with userName does NOT exist, create and save user record
-    const user = new User({authType: 'local'});
+    const user = new User({ authType: "local" });
     user.userName = userName;
     user.setPassword(password);
     user.save(function (err, user) {
@@ -91,10 +135,15 @@ exports.signup = function (req, res, next) {
       // Repond to request indicating the user was created
       const token = exports.tokenForUser(user);
       const { userName, seasonPass } = user;
-      res.cookie('token', token, { domain: 'localhost', path: '/', sameSite: 'strict', secure: false, httpOnly: true });
+      res.cookie("token", token, {
+        domain: "localhost",
+        path: "/",
+        sameSite: "strict",
+        secure: false,
+        httpOnly: true,
+      });
 
       res.status(200).send({ userName, seasonPass });
     });
   });
-  
 };

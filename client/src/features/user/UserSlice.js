@@ -152,7 +152,6 @@ export const userSlice = createSlice({
       })
       .addCase(signin.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-    
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "success";

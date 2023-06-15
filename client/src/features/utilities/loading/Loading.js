@@ -4,10 +4,11 @@ import { useSelector } from "react-redux";
 import styles from "./Loading.module.css";
 
 const Loading = () => {
-  const isLoading = useSelector((state) => state.resorts2Display.isLoading);
+  const userStatus = useSelector((state) => state.user.status);
+  const searchFormStatus = useSelector((state) => state.resorts2Display.status);
   return (
     <div>
-      {isLoading && (
+      { (userStatus === "loading" || searchFormStatus === "loading")  && (
         <ReactLoading
           type="cubes"
           color="rgba(214, 222, 232, 0.985)"
