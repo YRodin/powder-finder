@@ -35,7 +35,6 @@ const cookieExtractor = function (req) {
   if (req && req.cookies) {
     token = req.cookies["token"];
   }
-  console.log(`passport.js cookieExtractor token is ${token}`);
   return token;
 };
 
@@ -46,14 +45,10 @@ const jwtOptions = {
 
 const jwtLogin = new JwtStrategy(jwtOptions, function (payload, done) {
   User.findById(payload.sub, function (err, user) {
-    console.log('below is payload.sub from jwt login passport strategy');
-    console.log(payload.sub);
     if (err) {
       return done(err, false);
     }
     if (user) {
-      console.log('below is user obj passed to delete middleware in api/delete endpoint');
-      console.log(user);
       done(null, user);
     } else {
       done(null, false);
@@ -94,4 +89,4 @@ const googleAuth20 = new GoogleStrategy(
 passport.use(localLogin);
 passport.use(jwtLogin);
 passport.use(googleAuth20);
-console.log("Local and JWT strategies have been mounted to passport");
+

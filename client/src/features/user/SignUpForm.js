@@ -4,7 +4,6 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "./UserSlice";
-import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
 import { clearError, closeSignUpModal } from "./UserSlice";
 import Modal from "react-bootstrap/Modal";
 import styles from "./User.module.css";
@@ -62,10 +61,9 @@ function SignUpForm(props) {
               {...register("password", { required: "Required" })}
             />
           </Form.Group>
-          <Button variant="primary" type="submit" className={styles.fullWidthButton}>
+          <Button variant="secondary" type="submit" className={styles.fullWidthButton}>
             Submit
           </Button>
-          <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>
       </Modal.Body>
     </Modal>

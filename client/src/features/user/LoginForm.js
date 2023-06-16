@@ -5,7 +5,6 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { signin } from "./UserSlice";
-import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
 import { clearError, closeSignInModal, openSignUpModal } from "./UserSlice";
 import styles from "./User.module.css";
 import { ButtonGroup } from "react-bootstrap";
@@ -20,15 +19,15 @@ const LoginForm = () => {
   } = useForm();
 
   const dispatch = useDispatch();
-  const { isLoggedIn, showSignInModal, showSignUpModal, error } = useSelector(
+  const { isLoggedIn, showSignInModal, error } = useSelector(
     (state) => state.user
   );
   // if user is logged in show modal
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn || error) {
       dispatch(closeSignInModal());
     }
-  }, [isLoggedIn, dispatch]);
+  }, [isLoggedIn, dispatch, error ]);
 
   const onSubmit = async function (data) {
     dispatch(signin(data));
@@ -54,7 +53,7 @@ const LoginForm = () => {
           <Button
             href={`${baseURL}/api/auth/google`}
             className={styles.fullWidthButton}
-            variant="primary"
+            variant="secondary"
             type="submit"
           >
             Sign in with Google
@@ -83,12 +82,12 @@ const LoginForm = () => {
           </Form.Group>
           <ButtonGroup className={styles.fullWidthButton}>
             <Button 
-            variant="primary" 
+            variant="secondary" 
             type="submit">
               Log in
             </Button>
             <Button
-              variant="primary"
+              variant="secondary"
               onClick={() => {
                 dispatch(closeSignInModal());
                 dispatch(openSignUpModal());
@@ -97,7 +96,6 @@ const LoginForm = () => {
               Sign up
             </Button>
           </ButtonGroup>
-          <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>
       </Modal.Body>
     </Modal>

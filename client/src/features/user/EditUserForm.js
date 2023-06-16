@@ -4,7 +4,6 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
-import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
 import {
   editUser,
   clearError,
@@ -108,7 +107,7 @@ const EditUserForm = () => {
             </Form.Group>
           )}
           <ButtonGroup className={styles.fullWidthButton}>
-            <Button variant="primary" type="submit">
+            <Button variant="secondary" type="submit">
               Apply Changes
             </Button>
             <Button
@@ -121,7 +120,6 @@ const EditUserForm = () => {
               Delete Account
             </Button>
           </ButtonGroup>
-          <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>
       </Modal.Body>
     </Modal>
