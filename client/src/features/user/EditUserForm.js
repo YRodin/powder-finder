@@ -70,7 +70,7 @@ const EditUserForm = () => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           {!googleAuth && (
             <Form.Group className="mb-3" controlId="textField">
-              <Form.Label htmlFor="textField">Update User Name</Form.Label>
+              <Form.Label >Update User Name</Form.Label>
               <Form.Control
                 type="userName"
                 placeholder={userName}
@@ -80,7 +80,7 @@ const EditUserForm = () => {
           )}
 
           <Form.Group className="mb-3" controlId="dropdownField">
-            <Form.Label htmlFor="dropdownField">Update Season Pass</Form.Label>
+            <Form.Label>Update Season Pass</Form.Label>
             <Form.Control
               as="select"
               onChange={handleDropdownChange}
@@ -96,7 +96,7 @@ const EditUserForm = () => {
 
           {!googleAuth && (
             <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label htmlFor="formBasicPassword">
+              <Form.Label>
                 Update your Password
               </Form.Label>
               <Form.Control
