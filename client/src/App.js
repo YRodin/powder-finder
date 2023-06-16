@@ -14,6 +14,9 @@ import Banner from "./features/banner/Banner";
 import Footer from "./features/footer/Footer";
 import Loading from "./features/utilities/loading/Loading";
 import Writeup from "./features/writeup/Writeup";
+import LoginError from "./features/user/LoginError"
+import Authenticated from "./features/user/Authenticated";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -24,6 +27,11 @@ function App() {
   return (
     <div>
       <BrowserRouter>
+        <LoginError/>
+        <LoginForm/>
+        <SignUpForm/>
+        <EditUserForm/>
+        <DeleteUser/>
         <Loading />
         <Navbar />
         <Banner />
@@ -32,11 +40,8 @@ function App() {
         <GoogleMap />
         <Routes>
           <Route path="/" exact element={<></>}></Route>
-          <Route path="/user" exact element={<></>}></Route>
-          <Route path="/user/delete" element={<DeleteUser />}></Route>
-          <Route path="/user/login" element={<LoginForm />}></Route>
-          <Route path="/user/signup" element={<SignUpForm />}></Route>
-          <Route path="/user/edit" element={<EditUserForm />}></Route>
+          <Route path="/loginerror" element={<LoginError/>}></Route>
+          <Route path="/authenticated" element={<Authenticated/>}></Route>
         </Routes>
         <Footer />
         <ErrorNotificationModal error={error} handleClose={handleClose} />

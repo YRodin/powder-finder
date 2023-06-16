@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const initialState = {
   matchingResorts: [],
@@ -48,7 +49,7 @@ export const populateMatchingResorts = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/api/resortfinder",
+        `${baseURL}/api/resortfinder`,
         data
       );
       return response.data;

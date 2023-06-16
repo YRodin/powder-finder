@@ -8,7 +8,6 @@
     "start": "react-scripts start"
   },
   "dependencies": {},
-  "proxy": "http://localhost:5000",
   "browserslist": {
     "production": [
       ">0.2%",

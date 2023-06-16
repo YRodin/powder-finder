@@ -1,91 +1,43 @@
 const authentication = require("./authentication");
 const User = require("../models/user");
 
-exports.addPass = function(req, res, next) {
-  User.findOne({ userName: req.user.userName }).exec((error, user) => {
-    if(error) { next(error);}
-    else {
-      user.seasonPass = req.body.seasonPass;
-      user.save((err, user) => {
-        if (err) {
-          return next(err);
-        }
-        res.json(user);
-      });
-    }
-  })
-};
-
 exports.updateInfo = async (req, res, next) => {
-  const updatedUser = {
-    userName: "",
-    seasonPass: "",
-    token: "",
-  };
+  try {
+    // Find the user
+    let user = await User.findById(req.user._id);
 
-  for (const prop in req.body) {
-    // loop over each property in request body and update user
-    switch (prop) {
-      case "password":
-        if (req.body.password) {
-          try {
-            console.log("case password is invoked");
-            console.log(`req.body.password is ${req.body.password}`);
-            const user = await User.findById(req.user._id);
-            user.setPassword(req.body.password);
-            await user.save();
-          } catch (err) {
-            return next(err);
-          }
-        } else break;
-
-      case "userName":
-        if(req.body.userName) {
-          try {
-            console.log(
-              `case userName is invoked with new user name: ${req.body.userName}`
-            );
-            const user = await User.findByIdAndUpdate(req.user._id, {userName: req.body.userName}, {
-              new: true,
-            });
-            updatedUser.userName = user.userName;
-            await user.save();
-          } catch (err) {
-            return next(err);
-          }
-        } else break;
-
-      case "seasonPass":
-        if (req.body.seasonPass) {
-          try {
-            console.log(
-              `case seasonPass is invoked with new seasonPass: ${req.body.seasonPass}`
-            );
-            const user = await User.findByIdAndUpdate(req.user._id, { seasonPass: req.body.seasonPass }, {
-              new: true,
-            });
-            updatedUser.seasonPass = user.seasonPass;
-            await user.save();
-          } catch (err) {
-            return next(err);
-          }
-        } else break;
+    // Check and update fields
+    if (req.body.userName) {
+      user.userName = req.body.userName;
     }
-  }
-    //generate new token for user
-    updatedUser.token = authentication.tokenForUser(req.user);
 
-    //send response back to client
-    res.send({
-      userName: updatedUser.userName,
-      seasonPass: updatedUser.seasonPass,
-      token: updatedUser.token,
+    if (req.body.seasonPass) {
+      user.seasonPass = req.body.seasonPass;
+    }
+
+    if (req.body.password) {
+      user.setPassword(req.body.password);
+    }
+
+    // Save the updated user
+    await user.save();
+
+    // Generate new token for user
+    const token = authentication.tokenForUser(user._id);
+
+    // Set cookie with jwt send response back to client
+    res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+    res.status(200).send({
+      userName: user.userName,
+      seasonPass: user.seasonPass,
     });
+  } catch (err) {
+    return next(err);
   }
+};
 
 exports.delete = function (req, res, next) {
   // delete DB entry
-  // redirect to /home
   User.findByIdAndDelete(req.user._id, (err, user) => {
     if (err) {
       return next(err);

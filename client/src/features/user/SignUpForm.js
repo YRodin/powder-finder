@@ -4,48 +4,44 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "./UserSlice";
-import { useNavigate } from "react-router-dom";
-import { ErrorNotificationAlert } from "../utilities/ErrorNotificationAlert";
-import { clearError } from "./UserSlice";
+import { clearError, closeSignUpModal } from "./UserSlice";
 import Modal from "react-bootstrap/Modal";
-import { useLocation } from "react-router";
 import styles from "./User.module.css";
 
 function SignUpForm(props) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
-  const location = useLocation();
+
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { isLoggedIn } = useSelector((state) => state.user);
-  const error = useSelector((state) => state.user.error);
-  const showModal = location.pathname === "/user/signup";
+  const { isLoggedIn, showSignUpModal, error } = useSelector((state) => state.user);
+  const showModal = showSignUpModal;
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/user");
-    }
-  }, [isLoggedIn]);
+   if (isLoggedIn) {
+    dispatch(closeSignUpModal());
+   }
+  }, [isLoggedIn, dispatch]);
 
   const onSubmit = (data) => {
-    console.log(data);
     dispatch(signup(data));
-    // if user is logged in go to /user
+    dispatch(closeSignUpModal());
+    reset();
   };
   const handleErrorDismiss = () => {
     dispatch(clearError());
   };
   const hideHandler = () => {
     dispatch(clearError());
-    navigate("/");
+    dispatch(closeSignUpModal());
   };
   return (
     <Modal show={showModal} onHide={hideHandler}>
       <Modal.Header className={styles.modalStyle} closeButton>
-        <Modal.Title>Sign Up</Modal.Title>
+        <Modal.Title className={styles.centeredTitle}>Sign Up</Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modalStyle}>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -65,10 +61,9 @@ function SignUpForm(props) {
               {...register("password", { required: "Required" })}
             />
           </Form.Group>
-          <Button variant="primary" type="submit">
+          <Button variant="secondary" type="submit" className={styles.fullWidthButton}>
             Submit
           </Button>
-          <ErrorNotificationAlert error={error} onClose={handleErrorDismiss} />
         </Form>
       </Modal.Body>
     </Modal>

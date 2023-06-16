@@ -1,5 +1,7 @@
 node_modules/
 client/node_modules/
-.env
+*.env
 thoughtsAndPrayers.txt
-config/keys/
+config/keys
+oauth20Errors.txt
+notes/

@@ -1,15 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { normalizeErrorResponse } from "../utilities/errorUtils";
+const baseURl = process.env.REACT_APP_API_BASE_URL;
 
 const initialState = {
+  googleAuth: false,
   isLoggedIn: false,
   isLoggingIn: false,
   isSigningUp: false,
   isEditing: false,
-  token: null,
   seasonPass: null,
   userName: null,
+  showSignInModal: false,
+  showSignUpModal: false,
+  showSettingsModal: false,
+  showDeleteUserModal: false,
 };
 
 // async signin request to api; returns jwt;
@@ -18,8 +23,11 @@ export const signin = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/api/auth/signin",
-        data
+        `${baseURl}/api/auth/signin`,
+        data,
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -34,8 +42,11 @@ export const signup = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/api/auth/signup",
-        data
+        `${baseURl}/api/auth/signup`,
+        data,
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -49,14 +60,12 @@ export const editUser = createAsyncThunk(
   "user/editUser",
   async (data, thunkAPI) => {
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${data.token}`,
-      };
       const response = await axios.put(
-        "/api/user/updateinfo",
+        `${baseURl}/api/user/updateinfo`,
         data,
-        { headers }
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -68,15 +77,13 @@ export const editUser = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
-  async (token, thunkAPI) => {
+  async ( thunkAPI ) => {
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
       const response = await axios.delete(
-        "/api/user/delete",
-        { headers }
+        `${baseURl}/api/user/delete`,
+        {
+          withCredentials: true // include cookie
+        }
       );
       return response.data;
     } catch (err) {
@@ -105,6 +112,37 @@ export const userSlice = createSlice({
     signOut: (state) => {
       return initialState;
     },
+    signinOauth20: (state, action) => {
+      state.isLoggedIn = true;
+      state.googleAuth = true;
+      state.userName = action.payload.userName;
+      state.seasonPass = action.payload.seasonPass;
+    },
+    openSingInModal: (state) => {
+      state.showSignInModal = true;
+    },
+    closeSignInModal: (state) => {
+      state.showSignInModal = false;
+    },
+    openSignUpModal: (state) => {
+      state.showSignUpModal = true;
+    },
+    closeSignUpModal: (state) => {
+      state.showSignUpModal = false;
+    },
+    openSettingsModal: (state) => {
+      state.showSettingsModal = true;
+    },
+    closeSettingsModal: (state) => {
+      state.showSettingsModal = false;
+    },
+    openDeleteUserModal: (state) => {
+      state.showDeleteUserModal = true;
+    },
+    closeDeleteUserModal: (state) => {
+      state.showDeleteUserModal = false;
+    }
+
   },
   extraReducers: (builder) => {
     builder
@@ -114,7 +152,6 @@ export const userSlice = createSlice({
       })
       .addCase(signin.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.token = action.payload.token;
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "success";
@@ -131,7 +168,6 @@ export const userSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.token = action.payload.token;
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "fulfilled";
@@ -149,7 +185,6 @@ export const userSlice = createSlice({
       .addCase(editUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLoggedIn = true;
-        state.token = action.payload.token;
         state.seasonPass = action.payload.seasonPass;
         state.userName = action.payload.userName;
         state.status = "fulfilled";
@@ -180,5 +215,14 @@ export const {
   resetIsLoggingin,
   resetIsSigningUp,
   resetIsEditing,
+  signinOauth20,
+  openSignUpModal,
+  closeSignUpModal,
+  openSingInModal,
+  closeSignInModal,
+  openSettingsModal,
+  closeSettingsModal,
+  openDeleteUserModal,
+  closeDeleteUserModal
 } = userSlice.actions;
 export default userSlice.reducer;
