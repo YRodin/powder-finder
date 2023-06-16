@@ -17,6 +17,7 @@ import Writeup from "./features/writeup/Writeup";
 import LoginError from "./features/user/LoginError"
 import Authenticated from "./features/user/Authenticated";
 
+
 function App() {
   const dispatch = useDispatch();
   const error = useSelector((state) => state.resorts2Display.error);
@@ -26,6 +27,7 @@ function App() {
   return (
     <div>
       <BrowserRouter>
+        {/* <LoginError/> */}
         <LoginForm/>
         <SignUpForm/>
         <EditUserForm/>

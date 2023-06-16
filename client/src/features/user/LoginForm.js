@@ -82,7 +82,9 @@ const LoginForm = () => {
             {errors.password && <p>This field is required</p>}
           </Form.Group>
           <ButtonGroup className={styles.fullWidthButton}>
-            <Button variant="primary" type="submit">
+            <Button 
+            variant="primary" 
+            type="submit">
               Log in
             </Button>
             <Button

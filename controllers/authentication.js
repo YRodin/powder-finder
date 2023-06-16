@@ -51,14 +51,14 @@ exports.googleAuthErrorHandler = function () {
       function (err, user, info) {
         if (err) {
           return res.redirect(
-            process.env.FAILURE_REDIRECT_URL +
+            "/loginerror" +
               "?error=" +
               encodeURIComponent(err.message)
           );
         }
         if (!user) {
           return res.redirect(
-            process.env.FAILURE_REDIRECT_URL + "?error=Authentication%20failed"
+            "/loginerror" + "?error=Authentication%20failed"
           );
         }
         req.user = user;
