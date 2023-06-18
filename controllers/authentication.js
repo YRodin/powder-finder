@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const passport = require("passport");
+const isProduction = process.env.NODE_ENV === 'production';
+
 
 exports.tokenForUser = function (user) {
-  console.log("following is user._id passed into jwt.sign");
-  console.log(user._id);
   return jwt.sign(
     {
       sub: user._id,
@@ -16,15 +16,13 @@ exports.tokenForUser = function (user) {
 };
 
 exports.signin = function (req, res, next) {
-  console.log("req.user inside exports.signin is");
-  console.log(req.user);
   const token = exports.tokenForUser(req.user);
   const { userName, seasonPass } = req.user;
   res.cookie("token", token, {
-    domain: "localhost",
+    domain: isProduction ? process.env.API_BASE_URL : 'localhost',
     path: "/",
     sameSite: "strict",
-    secure: false,
+    secure: isProduction,
     httpOnly: true,
   });
 
@@ -34,10 +32,10 @@ exports.signin = function (req, res, next) {
 exports.signinWithGoogle = function (req, res, next) {
   const token = tokenWithUserInfo(req.user);
   res.cookie("token", token, {
-    domain: "localhost",
+    domain: isProduction ? process.env.API_BASE_URL : 'localhost',
     path: "/",
     sameSite: "strict",
-    secure: false,
+    secure: isProduction,
     httpOnly: true,
   });
   res.redirect(`${process.env.CLIENT_URL}/authenticated`);
@@ -136,10 +134,10 @@ exports.signup = function (req, res, next) {
       const token = exports.tokenForUser(user);
       const { userName, seasonPass } = user;
       res.cookie("token", token, {
-        domain: "localhost",
+        domain: isProduction ? process.env.API_BASE_URL : 'localhost',
         path: "/",
         sameSite: "strict",
-        secure: false,
+        secure: isProduction,
         httpOnly: true,
       });
 
