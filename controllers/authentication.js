@@ -15,9 +15,17 @@ exports.tokenForUser = function (user) {
   );
 };
 
-exports.signin = function (req, res, next) {
+exports.setCookie = function(req, res) {
+  // erase cookie 'token' cookie before setting new one
   const token = exports.tokenForUser(req.user);
-  const { userName, seasonPass } = req.user;
+  res.clearCookie('token', {
+    domain: isProduction ? process.env.API_BASE_URL : 'localhost',
+    path: "/",
+    sameSite: "strict",
+    secure: isProduction,
+    httpOnly: true,
+  });
+  // set a brand new 'token' cookie
   res.cookie("token", token, {
     domain: isProduction ? process.env.API_BASE_URL : 'localhost',
     path: "/",
@@ -25,19 +33,17 @@ exports.signin = function (req, res, next) {
     secure: isProduction,
     httpOnly: true,
   });
+};
 
+exports.signin = function (req, res, next) {
+  const { userName, seasonPass } = req.user;
+  exports.setCookie(req, res);
   res.status(200).send({ userName, seasonPass });
 };
 
 exports.signinWithGoogle = function (req, res, next) {
   const token = tokenWithUserInfo(req.user);
-  res.cookie("token", token, {
-    domain: isProduction ? process.env.API_BASE_URL : 'localhost',
-    path: "/",
-    sameSite: "strict",
-    secure: isProduction,
-    httpOnly: true,
-  });
+  exports.setCookie(req, res);
   res.redirect(`${process.env.CLIENT_URL}/authenticated`);
 };
 
@@ -131,17 +137,11 @@ exports.signup = function (req, res, next) {
         return next(err);
       }
       // Repond to request indicating the user was created
-      const token = exports.tokenForUser(user);
       const { userName, seasonPass } = user;
-      res.cookie("token", token, {
-        domain: isProduction ? process.env.API_BASE_URL : 'localhost',
-        path: "/",
-        sameSite: "strict",
-        secure: isProduction,
-        httpOnly: true,
-      });
-
+      const token = exports.tokenForUser(user);
+      exports.setCookie(req, res);
       res.status(200).send({ userName, seasonPass });
     });
   });
 };
+
