@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(cookieParser());
 
-const whitelist = ['http://localhost:3000', 'https://powder-finder.herokuapp.com/'];
+const whitelist = ['http://localhost:3000', 'http://powder-finder.herokuapp.com', 'http://powder-finder.herokuapp.com/', 'https://powder-finder.herokuapp.com', 'https://powder-finder.herokuapp.com/'];
 const corsOptions = {
   credentials: true, // This is important.
   origin: (origin, callback) => {
