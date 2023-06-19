@@ -1,5 +1,6 @@
 const authentication = require("./authentication");
 const User = require("../models/user");
+const isProduction = process.env.NODE_ENV === 'production';
 
 exports.updateInfo = async (req, res, next) => {
   try {
@@ -18,19 +19,11 @@ exports.updateInfo = async (req, res, next) => {
     if (req.body.password) {
       user.setPassword(req.body.password);
     }
-
     // Save the updated user
     await user.save();
-
-    // Generate new token for user
-    const token = authentication.tokenForUser(user._id);
-
-    // Set cookie with jwt send response back to client
-    res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
-    res.status(200).send({
-      userName: user.userName,
-      seasonPass: user.seasonPass,
-    });
+    authentication.setCookie(req, res);
+    const { userName, seasonPass } = user;
+    res.status(200).send({ userName, seasonPass });
   } catch (err) {
     return next(err);
   }
@@ -42,6 +35,14 @@ exports.delete = function (req, res, next) {
     if (err) {
       return next(err);
     } else {
+      // erase 'token' cookie 
+      res.clearCookie("token", {
+        domain: isProduction ? process.env.API_BASE_URL : "localhost",
+        path: "/",
+        sameSite: "strict",
+        secure: isProduction,
+        httpOnly: true,
+      });
       res.status(204).json({ message: "User deleted successfully" });
     }
   });

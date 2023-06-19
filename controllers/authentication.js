@@ -15,9 +15,18 @@ exports.tokenForUser = function (user) {
   );
 };
 
+exports.tokenWithUserInfo = function (user) {
+  const timestamp = new Date().getTime();
+  const { userName, seasonPass } = user;
+  return jwt.sign(
+    { sub: user.id, iat: timestamp, userName, seasonPass },
+    process.env.TOKEN_SECRET
+  );
+}
+
 exports.setCookie = function(req, res) {
+  const token = exports.tokenWithUserInfo(req.user);
   // erase cookie 'token' cookie before setting new one
-  const token = exports.tokenForUser(req.user);
   res.clearCookie('token', {
     domain: isProduction ? process.env.API_BASE_URL : 'localhost',
     path: "/",
@@ -42,7 +51,6 @@ exports.signin = function (req, res, next) {
 };
 
 exports.signinWithGoogle = function (req, res, next) {
-  const token = tokenWithUserInfo(req.user);
   exports.setCookie(req, res);
   res.redirect(`${process.env.CLIENT_URL}/authenticated`);
 };
@@ -71,15 +79,6 @@ exports.googleAuthErrorHandler = function () {
     )(req, res, next);
   };
 };
-
-function tokenWithUserInfo(user) {
-  const timestamp = new Date().getTime();
-  const { userName, seasonPass } = user;
-  return jwt.sign(
-    { sub: user.id, iat: timestamp, userName, seasonPass },
-    process.env.TOKEN_SECRET
-  );
-}
 
 exports.validateAndDecodeToken = function validateAndDecodeToken(
   req,
@@ -138,8 +137,23 @@ exports.signup = function (req, res, next) {
       }
       // Repond to request indicating the user was created
       const { userName, seasonPass } = user;
-      const token = exports.tokenForUser(user);
-      exports.setCookie(req, res);
+      const token = exports.tokenWithUserInfo(user);
+      // erase cookie 'token' cookie before setting new one
+      res.clearCookie('token', {
+        domain: isProduction ? process.env.API_BASE_URL : 'localhost',
+        path: "/",
+        sameSite: "strict",
+        secure: isProduction,
+        httpOnly: true,
+      });
+      // set a brand new 'token' cookie
+      res.cookie("token", token, {
+        domain: isProduction ? process.env.API_BASE_URL : 'localhost',
+        path: "/",
+        sameSite: "strict",
+        secure: isProduction,
+        httpOnly: true,
+      });
       res.status(200).send({ userName, seasonPass });
     });
   });
